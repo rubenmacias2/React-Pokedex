@@ -15,23 +15,24 @@ const theme = createTheme({
 });
 
 export default function LayoutGrid() {
-  const [pokeNext, setPokeNext] = useState([]);
+  const [url, setUrl] = useState(
+    "https://pokeapi.co/api/v2/pokemon?offset=0&limit=15"
+  );
+  const [pokeNext, setPokeNext] = useState("");
   const [pokeBack, setPokeBack] = useState([]);
   const [pokeList, setPokeList] = useState([]);
-  const conecApi = (url) => {
-    useEffect(() => {
-      fetch(url)
-        .then((res) => res.json())
-        .then((data) => {
-          setPokeNext(data.next);
-          setPokeBack(data.previous);
-          setPokeList(data.results);
-        })
-        .catch((err) => console.error(err));
-    }, []);
-    console.log("peticion =>" + url);
-  };
-  conecApi("https://pokeapi.co/api/v2/pokemon?offset=0&limit=15");
+
+  useEffect(() => {
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        setPokeNext(data.next);
+        setPokeBack(data.previous);
+        setPokeList(data.results);
+      })
+      .catch((err) => console.error(err));
+  }, [url]);
+
   return (
     <Container fixed>
       <Box sx={{ flexGrow: 1 }}>
@@ -57,8 +58,8 @@ export default function LayoutGrid() {
           variant="contained"
           style={{ marginTop: "10px", marginBottom: "10px" }}
           onClick={() => {
-            conecApi(pokeNext);
-            console.log(pokeNext);
+            alert(pokeNext);
+            setUrl(pokeNext);
           }}
         >
           Siguiente
