@@ -12,6 +12,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 const typeColors = {
+  fairy: "#fcece3",
   electric: "#FFEA70",
   normal: "#B09398",
   fire: "#FF675C",
@@ -28,40 +29,49 @@ const typeColors = {
   dragon: "#DA627D",
   steel: "#1D8A99",
   fighting: "#2F2F2F",
+
   default: "#2A1A1F",
 };
 
 function Pokecard({ url }) {
   const [pokeName, setPokeName] = useState("");
   const [pokeSprite, setPokeSprite] = useState("");
-  const [pokeType1, setPokeType1] = useState("");
-  const [pokeType2, setPokeType2] = useState("");
+  const [pokeTypes, setPokeTypes] = useState("");
   useEffect(() => {
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
         setPokeName(data.name);
         setPokeSprite(data.sprites);
-        setPokeType1(data.types[0].type);
-        setPokeType2(data.types[1].type);
+        setPokeTypes(data.types.map((e) => e.type.name));
       })
       .catch((err) => console.error(err));
   }, []);
   return (
     <Grid xs={4} md={4}>
-      <Item>
+      <Item
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <div
           style={{
-            textAlign: "center",
-            minheight: "100px",
-            maxWidth: "100px",
-            borderRadius: "100%",
-            background: `radial-gradient(${typeColors[pokeType1.name]} 35%,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            margin: "10px",
+            background: `radial-gradient(${typeColors[pokeTypes[0]]} 40%,
               ${
-                pokeType2.name
-                  ? typeColors[pokeType2.name]
-                  : typeColors[pokeType1.name]
+                pokeTypes[1]
+                  ? typeColors[pokeTypes[1]]
+                  : typeColors[pokeTypes[0]]
               } 33%)`,
+            borderRadius: "100%",
+            minWidth: "120px",
+            minHeight: "120px",
           }}
         >
           <img
@@ -71,7 +81,7 @@ function Pokecard({ url }) {
             }}
           />
         </div>
-        <h3>{pokeName}</h3>
+        <h3>{pokeName.charAt(0).toUpperCase() + pokeName.substring(1)}</h3>
       </Item>
     </Grid>
   );

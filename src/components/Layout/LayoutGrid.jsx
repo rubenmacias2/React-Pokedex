@@ -31,14 +31,14 @@ export default function LayoutGrid() {
         setPokeList(data.results);
       })
       .catch((err) => console.error(err));
-  }, [url]);
+  });
 
   return (
     <Container fixed>
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
-          {pokeList.map((e, i) => (
-            <Pokecard key={i} url={e.url} />
+          {pokeList.map((e) => (
+            <Pokecard key={e.name} url={e.url} />
           ))}
         </Grid>
       </Box>
@@ -50,7 +50,9 @@ export default function LayoutGrid() {
             marginBottom: "10px",
             marginRight: "5px",
           }}
-          onClick={() => alert(pokeBack)}
+          onClick={() => {
+            setUrl(pokeBack);
+          }}
         >
           Aterior
         </Button>
@@ -58,7 +60,6 @@ export default function LayoutGrid() {
           variant="contained"
           style={{ marginTop: "10px", marginBottom: "10px" }}
           onClick={() => {
-            alert(pokeNext);
             setUrl(pokeNext);
           }}
         >
