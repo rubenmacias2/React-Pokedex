@@ -3,6 +3,7 @@ import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Unstable_Grid2";
 import { useState, useEffect } from "react";
+import ModalCard from "../../ModalCard/ModalCard";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -37,6 +38,8 @@ function Pokecard({ url }) {
   const [pokeName, setPokeName] = useState("");
   const [pokeSprite, setPokeSprite] = useState("");
   const [pokeTypes, setPokeTypes] = useState("");
+  const [pokeData, setPokeData] = useState([]);
+  const [activModal, setActivModal] = useState(false);
   useEffect(() => {
     fetch(url)
       .then((res) => res.json())
@@ -44,17 +47,22 @@ function Pokecard({ url }) {
         setPokeName(data.name);
         setPokeSprite(data.sprites);
         setPokeTypes(data.types.map((e) => e.type.name));
+        setPokeData(data);
       })
       .catch((err) => console.error(err));
-  }, []);
+  }, [url]);
   return (
     <Grid xs={4} md={4}>
       <Item
+        onClick={() =>
+          activModal ? setActivModal(false) : setActivModal(true)
+        }
         style={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          cursor: "pointer",
         }}
       >
         <div
@@ -81,6 +89,7 @@ function Pokecard({ url }) {
             }}
           />
         </div>
+        <ModalCard activate={activModal} pokeData={pokeData} />
         <h3>{pokeName.charAt(0).toUpperCase() + pokeName.substring(1)}</h3>
       </Item>
     </Grid>

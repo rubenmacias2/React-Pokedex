@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import InputBase from "@mui/material/InputBase";
 import { styled } from "@mui/material/styles";
-
+import ModalCard from "./../../ModalCard/ModalCard";
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
@@ -21,28 +21,31 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 function InputSearch() {
   const [pokeData, setPokeData] = useState([]);
+  const [query, setQuery] = useState("");
+  const [activModal, setActivModal] = useState(false);
+
   return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-        fetch(
-          `https://pokeapi.co/api/v2/pokemon/${document
-            .getElementById("search")
-            .value.toLowerCase()}`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            setPokeData(data);
-          })
-          .catch((err) => console.error(err));
-        console.log(pokeData);
-      }}
-    >
+    <form>
       <StyledInputBase
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
-        id="search"
+        onChange={(event) => setQuery(event.target.value)}
+        onKeyPress={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            if (query.length > 0) {
+              fetch(`https://pokeapi.co/api/v2/pokemon/${query.toLowerCase()}`)
+                .then((res) => res.json())
+                .then((data) => {
+                  setPokeData(data);
+                  activModal ? setActivModal(false) : setActivModal(true);
+                })
+                .catch((err) => console.error(err));
+            }
+          }
+        }}
       />
+      <ModalCard activate={activModal} pokeData={pokeData} />
     </form>
   );
 }
